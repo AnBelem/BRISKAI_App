@@ -16,66 +16,94 @@ from PIL import Image
 # Configuración de la página
 #st.set_page_config(page_title="BRISK.AI", layout="wide")
 
+# Inicialización de datos
+if "users" not in st.session_state:
+    st.session_state["users"] = {"admin": "12345", "user": "password123"}  # Usuarios predeterminados
+if "authenticated" not in st.session_state:
+    st.session_state["authenticated"] = False
+if "show_instructions" not in st.session_state:
+    st.session_state["show_instructions"] = False
+if "show_register" not in st.session_state:
+    st.session_state["show_register"] = False
+
 # Función de inicio de sesión
 def login():
-    st.set_page_config(page_title="BRISK.AI", layout="wide")
     st.title("Inicio de Sesión")
     st.write("Por favor, introduce tus datos para acceder a la aplicación.")
 
-    # Inputs de usuario y contraseña
     username = st.text_input("Usuario:")
     password = st.text_input("Contraseña:", type="password")
 
-    # Credenciales de ejemplo
-    valid_credentials = {"admin": "12345", "user": "password123"}
-
     if st.button("Iniciar Sesión"):
-        if username in valid_credentials and password == valid_credentials[username]:
+        if username in st.session_state["users"] and password == st.session_state["users"][username]:
             st.session_state["authenticated"] = True
-            st.session_state["show_instructions"] = True  # Estado inicial para mostrar instrucciones
-            st.session_state["user"] = username  # Guardar el usuario actual
+            st.session_state["show_instructions"] = True
             st.success("Inicio de sesión exitoso. Cargando las instrucciones...")
         else:
             st.error("Usuario o contraseña incorrectos.")
 
-# Pantalla de instrucciones
+    if st.button("Registrarse"):
+        st.session_state["show_register"] = True
+
+# Función de registro de usuario
+def register():
+    st.title("Registro de Usuario")
+    st.write("Por favor, introduce los datos para crear una nueva cuenta.")
+
+    new_username = st.text_input("Nuevo Usuario:")
+    new_password = st.text_input("Nueva Contraseña:", type="password")
+    confirm_password = st.text_input("Confirmar Contraseña:", type="password")
+
+    if st.button("Registrarse"):
+        if not new_username or not new_password:
+            st.error("El nombre de usuario y la contraseña son obligatorios.")
+        elif new_username in st.session_state["users"]:
+            st.error("El nombre de usuario ya existe. Por favor, elige otro.")
+        elif new_password != confirm_password:
+            st.error("Las contraseñas no coinciden.")
+        else:
+            # Registrar nuevo usuario
+            st.session_state["users"][new_username] = new_password
+            st.success("¡Registro exitoso! Ahora puedes iniciar sesión.")
+            st.session_state["show_register"] = False
+
+    if st.button("Volver al inicio de sesión"):
+        st.session_state["show_register"] = False
+
+# Página de instrucciones
 def instructions():
     st.title("Cómo funciona la aplicación")
     st.write("""
     Bienvenido a **BRISK.AI**. Aquí hay una breve guía para usar la aplicación:
     
-    1. **Selecciona un segmento predeterminado o introduce un PMID:** Proporciona el PMID el cúal quieres obtener resúmen o elige uno de los segmentos predefinidos.
+    1. **Selecciona un segmento predeterminado o introduce un PMID:** Proporciona el PMID el cual quieres resumir o elige uno de los segmentos predefinidos.
     2. **Configura los parámetros:** Ajusta las opciones como tokens máximos, temperatura, y el estilo del resumen (persona, idioma).
-    3. **Haz clic en "Resumir":** Obtén tu texto simplificado y resumido basado en tus configuraciones.
+    3. **Haz clic en "Summarise":** Obtén tu texto simplificado y resumido basado en tus configuraciones.
     
-    Una vez que hayas leído esto, haz clic en el botón de abajo para continuar a la aplicación principal.
+    Haz clic en el botón de abajo para continuar a la aplicación principal.
     """)
 
-    # Botón para continuar a la pantalla principal
     if st.button("Ir a la Aplicación Principal"):
         st.session_state["show_instructions"] = False
 
 # Pantalla principal
 def main_app():
-    st.sidebar.button("Cerrar Sesión", on_click=lambda: st.session_state.update({"authenticated": False, "show_instructions": False, "user": None}))
+    st.sidebar.button("Cerrar Sesión", on_click=lambda: st.session_state.update({"authenticated": False, "show_instructions": False}))
     st.title("BRISK.AI")
-    st.subheader(f"Bienvenido a la aplicación, {st.session_state['user']}.")
+    st.subheader(f"Bienvenido a la aplicación.")
     st.write("Biomedical :blue[text summarisation] and :blue[simplification] using GPT-3.5.")
+    # Aquí va el resto de la lógica de la pantalla principal
 
 # Manejo del flujo de la aplicación
-if "authenticated" not in st.session_state:
-    st.session_state["authenticated"] = False
-
-if "show_instructions" not in st.session_state:
-    st.session_state["show_instructions"] = False
-
-# Control de navegación
-if not st.session_state["authenticated"]:
+if st.session_state["show_register"]:
+    register()
+elif not st.session_state["authenticated"]:
     login()
 elif st.session_state["show_instructions"]:
     instructions()
 else:
-    main_app()   
+    main_app()
+
 
 # Título principal
 #st.title("BRISK.AI")
