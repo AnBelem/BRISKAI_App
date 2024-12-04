@@ -78,7 +78,7 @@ def instructions():
     
     1. **Selecciona un segmento predeterminado o introduce un PMID:** Proporciona el PMID el cual quieres resumir o elige uno de los segmentos predefinidos.
     2. **Configura los parámetros:** Ajusta las opciones como tokens máximos, temperatura, y el estilo del resumen (persona, idioma).
-    3. **Haz clic en "Summarise":** Obtén tu texto simplificado y resumido basado en tus configuraciones.
+    3. **Haz clic en "Resumir":** Obtén tu texto simplificado y resumido basado en tus configuraciones.
     
     Haz clic en el botón de abajo para continuar a la aplicación principal.
     """)
