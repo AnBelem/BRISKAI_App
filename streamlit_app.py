@@ -43,7 +43,7 @@ def instructions():
     st.title("Cómo funciona la aplicación")
     st.write("""
     Bienvenido a **BRISK.AI**. Aquí hay una breve guía para usar la aplicación:
-    s
+    
     1. **Selecciona un segmento predeterminado o introduce un PMID:** Proporciona el PMID el cúal quieres obtener resúmen o elige uno de los segmentos predefinidos.
     2. **Configura los parámetros:** Ajusta las opciones como tokens máximos, temperatura, y el estilo del resumen (persona, idioma).
     3. **Haz clic en "Resumir":** Obtén tu texto simplificado y resumido basado en tus configuraciones.
